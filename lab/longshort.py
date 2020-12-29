@@ -270,8 +270,8 @@ class LongShort:
     tRank.start()
     tRank.join()
 
-    # Grabs the top and bottom quarter of the sorted stock list to get the long and short lists.
-    longShortAmount = len(self.allStocks) // 5
+    # Grabs the top and bottom portion of the sorted stock list to get the long and short lists.
+    longShortAmount = len(self.allStocks) // 5 # <- how many portions the list is divided to 
     self.long = []
     self.short = []
     for i, stockField in enumerate(self.allStocks):
@@ -344,7 +344,7 @@ class LongShort:
 
   # Get percent changes of the stock prices over the past 10 minutes.
   def getPercentChanges(self):
-    length = 10
+    length = 3
     for i, stock in enumerate(self.allStocks):
       bars = self.alpaca.get_barset(stock[0], 'minute', length)
       self.allStocks[i][1] = (bars[stock[0]][len(bars[stock[0]]) - 1].c - bars[stock[0]][0].o) / bars[stock[0]][0].o
