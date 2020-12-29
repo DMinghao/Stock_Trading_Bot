@@ -2,7 +2,7 @@
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FDMinghao%2FStock_Trading_Bot&count_bg=%23747474&title_bg=%23000000&icon=skyliner.svg&icon_color=%23F81C1C&title=Repo+View+Count&edge_flat=true)](https://hits.seeyoufarm.com)
 
-
+## **WORK IN PROGRESS...**
 
 ## Getting Started 
 
