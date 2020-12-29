@@ -1,0 +1,5 @@
+APCA_API_KEY_ID = ""
+APCA_API_SECRET_KEY = ""
+APCA_API_DATA_BASE_URL = "https://data.alpaca.markets/v1"
+APCA_API_PAPER_BASE_URL = "https://paper-api.alpaca.markets"
+APCA_API_STREAM_BASE_URL = "wss://data.alpaca.markets/stream"

@@ -4,9 +4,9 @@ import time
 import datetime
 import os
 from dotenv import load_dotenv
-
 from tradingview_ta import TA_Handler, Interval
-import threading
+
+from utility import util, rating
 
 load_dotenv("../config/.env")
 
@@ -15,43 +15,10 @@ API_SECRET = os.getenv('APCA_API_SECRET_KEY')
 APCA_API_BASE_URL = "https://paper-api.alpaca.markets"
 
 def getTradeable(conn): 
-  universe = conn.list_assets(status='active', asset_class='us_equity')
-  universe = [{'exchange':x.exchange, 'symbol':x.symbol} for x in universe if x.shortable == True and x.tradable == True]
-  
-  def getSummary(i): 
-    handler = TA_Handler()
-    handler.set_screener_as_stock("america")
-    handler.set_interval_as(Interval.INTERVAL_1_DAY)
-    handler.set_exchange_as_crypto_or_stock(universe[i]['exchange'])
-    handler.set_symbol_as(universe[i]['symbol'])
-    try:
-        universe[i]['rating'] = handler.get_analysis().summary
-    except: 
-        pass
-  
-  threads = []
-  for i in range(len(universe)):
-    x = threading.Thread(target=getSummary, args=(i,))
-    threads.append(x)
-    x.start()
-  buyStrongList = [
-    x for x in universe 
-    if 'rating' in x 
-    and x['rating']['RECOMMENDATION'] == 'STRONG_BUY'
-  ]
-  buyStrongList.sort(key=lambda x: x['rating']['BUY'], reverse = True)
-  nutrualList = [
-    x for x in universe 
-    if 'rating' in x 
-    and x['rating']['RECOMMENDATION'] == 'NEUTRAL'
-  ]
-  nutrualList.sort(key=lambda x: x['rating']['NEUTRAL'], reverse = True)
-  sellStrongList = [
-    x for x in universe 
-    if 'rating' in x 
-    and x['rating']['RECOMMENDATION'] == 'STRONG_SELL'
-  ]
-  sellStrongList.sort(key=lambda x: x['rating']['SELL'], reverse = True)
+  universe = util.allStocks(conn)
+  buyStrongList = universe[rating.STRONG_BUY]
+  nutrualList = universe[rating.NEUTRAL]
+  sellStrongList = universe[rating.STRONG_SELL]
   total = len(buyStrongList)+len(nutrualList)+len(sellStrongList)
   finalList = []
   finalList += buyStrongList[:int(len(buyStrongList)*(len(buyStrongList)/total))]
