@@ -28,7 +28,7 @@
 2. Install Requirements 
     ```bash
     $ pip install -r requirements.txt
-    $ pip install -g .
+    $ pip install -e .
     ```
 3. Rename [`.env copy`](config/.env%20copy) in the `./config` folder to `.env` 
 4. Insert `Alpaca API Key` and `Alpaca Secret Key`

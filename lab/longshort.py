@@ -92,7 +92,13 @@ class LongShort:
 
         # Run script again after market close for next trading day.
         print("Sleeping until market close (15 minutes).")
-        time.sleep(60 * 15)
+        time.sleep(60 * 20)
+        print("Waiting for market to open...")
+        tAMO = threading.Thread(target=self.awaitMarketOpen)
+        # tAMO.name = 'tAMO'
+        tAMO.start()
+        tAMO.join()
+        print("Market opened.")
       else:
         # Rebalance the portfolio.
         tRebalance = threading.Thread(target=self.rebalance)
