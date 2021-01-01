@@ -99,7 +99,15 @@ class LongShort:
         # tRebalance.name = 'rebalance'
         tRebalance.start()
         tRebalance.join()
-        time.sleep(120)
+        stockUniverse = getTradeable(self.alpaca)
+        print(f'Selected Stock Count: {len(stockUniverse)}')
+        # stockUniverse = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW', 'OKTA', 'TWTR', 'TM', 'RTN', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', 'BABA', 'NIO', ]
+        # stockUniverse = ['NIO','TCEHY','BILI','GE','FCAU','MFA','IVR','CIM','PSEC','JD']
+        # Format the allStocks variable for use in the class.
+        self.allStocks = []
+        for stock in stockUniverse:
+          self.allStocks.append([stock, 0])
+        time.sleep(60*5)
 
   # Wait for market to open.
   def awaitMarketOpen(self):
@@ -358,7 +366,7 @@ class LongShort:
     tGetPC.join()
 
     # Sort the stocks in place by the percent change field (marked by pc).
-    self.allStocks.sort(key=lambda x: x[1])
+    self.allStocks.sort(key=lambda x: x[1], reverse = True)
 
 # Run the LongShort class
 ls = LongShort()

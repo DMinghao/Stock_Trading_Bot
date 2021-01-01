@@ -8,15 +8,29 @@ from .constant import alpaca, rating
 
 class util: 
     """This util class provides handy tools 
-    
+
+    Functions: 
+        connectAlpaca()
+            Connect to Alpaca
+        allStocks(conn=connectAlpaca.__func__)
+            Get all tradeable stocks 
+        awaitMarketOpen(conn=connectAlpaca.__func__)
+            Halt main thread and wait for market open 
+        getTotalPrice(stocks, result=['DEFAULT'], conn=connectAlpaca.__func__)
+            Get last minite total price for list of stocks 
+        getPercentChanges(stocks, timeInterval=10, conn=connectAlpaca.__func__)
+            Get each stock's price change in the past [timeInterval] mitites
+        submitOrder(qty, stock, side, result=['DEFAULT'], conn=connectAlpaca.__func__)
+            Submit one market order 
+        sendBatchOrder(qty, stocks, side, blacklist=[], result=['DEFAULT'], conn=connectAlpaca.__func__)
+            Submit market order for each stock in list 
     
     """
     @staticmethod
     def connectAlpaca(): 
-        """Returns an Alpaca connection object
+        '''Returns an Alpaca connection object
             the connection object allows user to operate on thier Alpaca account 
-        """
-        print("Conneting...")
+        '''
         return tradeapi.REST(
             key_id=alpaca.APCA_API_KEY_ID, 
             secret_key=alpaca.APCA_API_SECRET_KEY, 
@@ -25,7 +39,13 @@ class util:
 
     @staticmethod
     def allStocks(conn=connectAlpaca.__func__): 
-        """Get all tradeable stocks by rating
+        """[summary]
+
+        Args:
+            conn ([type], optional): [description]. Defaults to connectAlpaca.__func__.
+
+        Returns:
+            [type]: [description]
         """
         universe = conn.list_assets(status='active', asset_class='us_equity')
         universe = [{'exchange':x.exchange, 'symbol':x.symbol} for x in universe if x.shortable == True and x.tradable == True]
@@ -33,7 +53,7 @@ class util:
         def getSummary(i): 
             handler = TA_Handler()
             handler.set_screener_as_stock("america")
-            handler.set_interval_as(Interval.INTERVAL_1_DAY)
+            handler.set_interval_as(Interval.INTERVAL_5_MINUTES)
             handler.set_exchange_as_crypto_or_stock(universe[i]['exchange'])
             handler.set_symbol_as(universe[i]['symbol'])
             try:
@@ -82,6 +102,11 @@ class util:
 
     @staticmethod
     def awaitMarketOpen(conn=connectAlpaca.__func__):
+        """[summary]
+
+        Args:
+            conn ([type], optional): [description]. Defaults to connectAlpaca.__func__.
+        """
         isOpen = conn.get_clock().is_open
         while(not isOpen):
             clock = conn.get_clock()
@@ -94,6 +119,16 @@ class util:
 
     @staticmethod
     def getTotalPrice(stocks, result=['DEFAULT'], conn=connectAlpaca.__func__):
+        """[summary]
+
+        Args:
+            stocks ([type]): [description]
+            result (list, optional): [description]. Defaults to ['DEFAULT'].
+            conn ([type], optional): [description]. Defaults to connectAlpaca.__func__.
+
+        Returns:
+            [type]: [description]
+        """
         totalPrice = 0
         for stock in stocks:
             bars = conn.get_barset(stock, "minute", 1)
@@ -104,6 +139,13 @@ class util:
 
     @staticmethod
     def getPercentChanges(stocks, timeInterval=10, conn=connectAlpaca.__func__):
+        """[summary]
+
+        Args:
+            stocks ([type]): [description]
+            timeInterval (int, optional): [description]. Defaults to 10.
+            conn ([type], optional): [description]. Defaults to connectAlpaca.__func__.
+        """
         length = timeInterval
         for i, stock in enumerate(stocks): 
             bars = conn.get_barset(stock[0], 'minute', length)
@@ -111,6 +153,18 @@ class util:
 
     @staticmethod
     def submitOrder(qty, stock, side, result=['DEFAULT'], conn=connectAlpaca.__func__):
+        """[summary]
+
+        Args:
+            qty ([type]): [description]
+            stock ([type]): [description]
+            side ([type]): [description]
+            result (list, optional): [description]. Defaults to ['DEFAULT'].
+            conn ([type], optional): [description]. Defaults to connectAlpaca.__func__.
+
+        Returns:
+            [type]: [description]
+        """
         completed = False
         if(qty > 0):
             try:
@@ -129,6 +183,19 @@ class util:
     
     @staticmethod
     def sendBatchOrder(qty, stocks, side, blacklist=[], result=['DEFAULT'], conn=connectAlpaca.__func__):
+        """[summary]
+
+        Args:
+            qty ([type]): [description]
+            stocks ([type]): [description]
+            side ([type]): [description]
+            blacklist (list, optional): [description]. Defaults to [].
+            result (list, optional): [description]. Defaults to ['DEFAULT'].
+            conn ([type], optional): [description]. Defaults to connectAlpaca.__func__.
+
+        Returns:
+            [type]: [description]
+        """
         executed = []
         incomplete = []
         for stock in stocks:
