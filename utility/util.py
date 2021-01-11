@@ -1,10 +1,14 @@
-import alpaca_trade_api as tradeapi
+import datetime
+import os
 import threading
 import time
-import datetime
-from tradingview_ta import TA_Handler, Interval
+import pandas as pd
+
+import alpaca_trade_api as tradeapi
+from tradingview_ta import Interval, TA_Handler
 
 from .constant import alpaca, rating
+
 
 class util: 
     """This util class provides handy tools 
@@ -38,7 +42,7 @@ class util:
             api_version='v2')
 
     @staticmethod
-    def allStocks(conn=connectAlpaca.__func__): 
+    def allStocks(conn=connectAlpaca.__func__()): 
         """[summary]
 
         Args:
@@ -101,7 +105,7 @@ class util:
         return {'STRONG_BUY':buyStrongList,'BUY':buyList,'NEUTRAL':nutrualList,'SELL':sellList, 'STRONG_SELL':sellStrongList}
 
     @staticmethod
-    def awaitMarketOpen(conn=connectAlpaca.__func__):
+    def awaitMarketOpen(conn):
         """[summary]
 
         Args:
@@ -118,7 +122,7 @@ class util:
             isOpen = conn.get_clock().is_open
 
     @staticmethod
-    def getTotalPrice(stocks, result=['DEFAULT'], conn=connectAlpaca.__func__):
+    def getTotalPrice(stocks, result=['DEFAULT'], conn='DEFAULT'):
         """[summary]
 
         Args:
@@ -138,7 +142,7 @@ class util:
         else: result.append(totalPrice)
 
     @staticmethod
-    def getPercentChanges(stocks, timeInterval=10, conn=connectAlpaca.__func__):
+    def getPercentChanges(stocks, timeInterval=10, conn='DEFAULT'):
         """[summary]
 
         Args:
@@ -152,7 +156,7 @@ class util:
             stocks[i][1] = (bars[stock[0]][len(bars[stock[0]]) - 1].c - bars[stock[0]][0].o) / bars[stock[0]][0].o
 
     @staticmethod
-    def submitOrder(qty, stock, side, result=['DEFAULT'], conn=connectAlpaca.__func__):
+    def submitOrder(qty, stock, side, result=['DEFAULT'], conn='DEFAULT'):
         """[summary]
 
         Args:
@@ -182,7 +186,7 @@ class util:
         else: result.append(completed)
     
     @staticmethod
-    def sendBatchOrder(qty, stocks, side, blacklist=[], result=['DEFAULT'], conn=connectAlpaca.__func__):
+    def sendBatchOrder(qty, stocks, side, blacklist=[], result=['DEFAULT'], conn='DEFAULT'):
         """[summary]
 
         Args:
@@ -214,6 +218,18 @@ class util:
             return [executed, incomplete]
         else: result.append([executed, incomplete])
 
+    @staticmethod
+    def getHistoryPrice(stocks, fromdate, todate, conn=connectAlpaca.__func__()): 
+        NY = 'America/New_York'
+        start=pd.Timestamp(fromdate, tz=NY).isoformat()
+        end=pd.Timestamp(todate, tz=NY).isoformat()
+        print(conn.get_barset(stocks, 'minute', start=start, end=end).df)
+
+    @staticmethod
+    def getProjectDir(): 
+        return os.path.dirname(os.getcwd()) 
+
 if __name__ == '__main__': 
     print('Start Testing Util: ')
     import unittest
+    util.getHistoryPrice(['AAPL', 'GOOG'], '2015-01-19 0:00','2015-02-25 0:00' )

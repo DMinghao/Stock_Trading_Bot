@@ -9,6 +9,9 @@ class alpaca:
     APCA_API_PAPER_BASE_URL = os.getenv('APCA_API_PAPER_BASE_URL')
     APCA_API_STREAM_BASE_URL = os.getenv('APCA_API_STREAM_BASE_URL')
 
+class polygon:
+    POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
+
 class rating: 
     STRONG_BUY = 'STRONG_BUY'
     BUY = 'BUY'
