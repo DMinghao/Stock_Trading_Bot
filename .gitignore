@@ -132,4 +132,8 @@ logs
 .vscode/
 trainingData/
 checkpoints/
-Darwin_Project/
+checkpoints copy/
+# Darwin_Project/
+
+phi
+phi.pub
